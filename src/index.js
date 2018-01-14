@@ -4,7 +4,9 @@ import Bingo from './Bingo';
 
 const NUMBERS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-const CHARS = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ'];
+const CHARS = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ'].map(
+  a => `${a}${a.toLowerCase()}`
+);
 
 class App extends React.Component {
   constructor(props) {
