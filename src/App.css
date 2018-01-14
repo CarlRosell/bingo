@@ -1,0 +1,46 @@
+html {
+  min-width: 100vw;
+  min-height: 100vh;
+  background: linear-gradient(-45deg, teal, lightblue);
+  padding: 20px;
+}
+
+*,
+*:before,
+*::after {
+  box-sizing: border-box;
+}
+
+button {
+  text-transform: uppercase;
+  border: 2px solid teal;
+  padding: 10px;
+  margin-right: 20px;
+  border-radius: 3px;
+  background: white;
+  color: teal;
+  font-size: 16px;
+}
+
+button[disabled] {
+  opacity: 0.6;
+}
+
+@keyframes example {
+  from {
+    transform: rotate(0deg) translateX(40px);
+  }
+  to {
+    transform: rotate(360deg) translateX(40px);
+  }
+}
+
+.ball {
+  transition: all 1s;
+  position: absolute;
+}
+
+.animate {
+  transform: rotate(0deg) translateX(40px);
+  animation: example linear 2s infinite;
+}
