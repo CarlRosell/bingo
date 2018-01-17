@@ -1,8 +1,9 @@
 import React from 'react';
 import { render } from 'react-dom';
 import Bingo from './Bingo';
+import createRange from './createRange';
 
-const NUMBERS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+const NUMBERS = createRange(0, 20);
 
 const CHARS = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ'].map(
   a => `${a}${a.toLowerCase()}`
