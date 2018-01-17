@@ -1,0 +1,39 @@
+button,
+input {
+  text-transform: uppercase;
+  border: 2px solid teal;
+  padding: 10px;
+  margin-right: 20px;
+  margin-bottom: 10px;
+  border-radius: 3px;
+  background: white;
+  color: teal;
+  font-size: 16px;
+}
+
+button[disabled] {
+  opacity: 0.6;
+}
+
+input {
+  width: 70px;
+}
+
+@keyframes example {
+  from {
+    transform: rotate(0deg) translateX(40px);
+  }
+  to {
+    transform: rotate(360deg) translateX(40px);
+  }
+}
+
+.ball {
+  transition: all 1s;
+  position: absolute;
+}
+
+.animate {
+  transform: rotate(0deg) translateX(40px);
+  animation: example linear 2s infinite;
+}

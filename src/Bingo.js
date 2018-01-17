@@ -1,118 +1,158 @@
 import React from 'react';
-import { render } from 'react-dom';
 import shuffleArray from './shuffleArray';
-import './App.css';
+import createRange from './createRange';
+import './Bingo.css';
 
 const LINE_HEIGHT = 30;
 
-const PICK_DURATION = 0;
+const CHARS = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ'].map(
+  a => `${a}${a.toLowerCase()}`
+);
 
-const generateInitialState = chars => ({
-  availableChars: shuffleArray([...chars]),
-  usedChars: [],
-  currentChar: null,
-  picking: false
-});
+const generateInitialState = (firstNumber, lastNumber, isNumeric) => {
+  const chars = isNumeric ? createRange(firstNumber, lastNumber) : CHARS;
+  return {
+    chars,
+    shuffledChars: shuffleArray([...chars]),
+    usedChars: [],
+    currentChar: null,
+    firstNumber,
+    lastNumber,
+    isNumeric
+  };
+};
 
 export default class Bingo extends React.Component {
   constructor(props) {
     super(props);
-    this.state = generateInitialState(props.chars);
+    this.state = generateInitialState(0, 20, true);
   }
 
   pickLetter = () => {
-    const { availableChars, usedChars, currentChar } = this.state;
-    this.setState(
-      {
-        picking: true,
+    this.setState(s => {
+      const { shuffledChars, usedChars, currentChar } = s;
+      const [newCurrentChar, ...newshuffledChars] = shuffledChars;
+      return {
         usedChars: [...usedChars, currentChar].filter(a => a !== null),
-        currentChar: null
-      },
-      () => {
-        if (availableChars.length > 0) {
-          setTimeout(() => {
-            const [newCurrentChar, ...newavailableChars] = availableChars;
-            this.setState({
-              picking: false,
-              currentChar: newCurrentChar,
-              availableChars: newavailableChars
-            });
-          }, PICK_DURATION);
-        }
-      }
+        currentChar: newCurrentChar,
+        shuffledChars: newshuffledChars
+      };
+    });
+  };
+
+  reset = () => {
+    this.setState(s =>
+      generateInitialState(s.firstNumber, s.lastNumber, s.isNumeric)
     );
   };
 
-  componentWillReceiveProps(newProps) {
-    this.setState(generateInitialState(newProps.chars));
-  }
-
-  reset = () => {
-    this.setState(generateInitialState(this.props.chars));
+  updateFirstNumber = numberString => {
+    const number = parseInt(numberString, 10);
+    this.setState(s =>
+      generateInitialState(number, s.lastNumber, s.isNumeric)
+    );
   };
 
+  updateLastNumber = numberString => {
+    const number = parseInt(numberString, 10);
+    this.setState(s =>
+      generateInitialState(s.firstNumber, number, s.isNumeric)
+    );
+  };
+
+  toggleIsNumeric = () => {
+    this.setState(s =>
+      generateInitialState(s.firstNumber, s.lastNumber, !s.isNumeric)
+    );
+  }
+
   render() {
-    const { chars, isNumeric } = this.props;
-    const { currentChar, usedChars, picking } = this.state;
+    const {
+      chars,
+      currentChar,
+      usedChars,
+      firstNumber,
+      lastNumber,
+      isNumeric
+    } = this.state;
     return (
       <div>
-        <button disabled={picking} onClick={this.pickLetter}>
-          Dra en {isNumeric ? 'siffra' : 'bokstav'}
-        </button>
+        <button onClick={this.toggleIsNumeric}>Använd {isNumeric ? 'bokstäver' : 'siffror'}</button>
         <button onClick={this.reset}>Börja om</button>
-        <div style={{ position: 'relative' }}>
-          {chars.map((letter, index) => {
-            const usedIndex = usedChars.indexOf(letter);
-            return (
-              <div
-                key={letter}
-                className={
-                  currentChar === letter || usedIndex >= 0 ? (
-                    'ball'
-                  ) : (
-                    'ball animate'
-                  )
-                }
-                style={{
-                  animationDelay: `${2 / chars.length * index}s`,
-                  width: currentChar === letter ? '150px' : '30px',
-                  left:
-                    usedIndex >= 0
-                      ? '90%'
-                      : currentChar === letter ? '40%' : '5%',
-                  top:
-                    usedIndex >= 0
-                      ? `${usedIndex * LINE_HEIGHT}px`
-                      : currentChar === letter ? '50px' : `${LINE_HEIGHT * 3}px`
-                }}
-              >
-                <svg viewBox="0 0 50 50">
-                  <g id="UrTavla">
-                    <circle
-                      fill="teal"
-                      stroke="black"
-                      strokeWidth="3px"
-                      cx="25"
-                      cy="25"
-                      r="23"
-                    />
-                    <text
-                      fontFamily="Muli, Verdana"
-                      x="50%"
-                      y="50%"
-                      textAnchor="middle"
-                      fill="white"
-                      strokeWidth="1px"
-                      fontSize="1.5em"
-                      dy=".35em"
-                    >
-                      {letter}
-                    </text>
-                  </g>
-                </svg>
-              </div>
-            );
-          })}
+        <div>
+          <button
+            disabled={chars.length === usedChars.length}
+            onClick={this.pickLetter}
+          >
+            Dra en {isNumeric ? 'siffra' : 'bokstav'}
+          </button>
+          {isNumeric && (
+            <span>
+              <input
+                type="number"
+                onChange={e => this.updateFirstNumber(e.target.value)}
+                value={firstNumber}
+              />
+              <input
+                type="number"
+                onChange={e => this.updateLastNumber(e.target.value)}
+                value={`${lastNumber}`}
+              />
+            </span>
+          )}
+
+          <div style={{ position: 'relative' }}>
+            {chars.map((char, index) => {
+              const usedIndex = usedChars.indexOf(char);
+              return (
+                <div
+                  key={char}
+                  className={
+                    currentChar === char || usedIndex >= 0
+                      ? 'ball'
+                      : 'ball animate'
+                  }
+                  style={{
+                    animationDelay: `${2 / chars.length * index}s`,
+                    width: currentChar === char ? '150px' : '30px',
+                    left:
+                      usedIndex >= 0
+                        ? '90%'
+                        : currentChar === char ? '40%' : '5%',
+                    top:
+                      usedIndex >= 0
+                        ? `${usedIndex * LINE_HEIGHT}px`
+                        : currentChar === char ? '50px' : `${LINE_HEIGHT * 3}px`
+                  }}
+                >
+                  <svg viewBox="0 0 50 50">
+                    <g id="UrTavla">
+                      <circle
+                        fill="teal"
+                        stroke="black"
+                        strokeWidth="3px"
+                        cx="25"
+                        cy="25"
+                        r="23"
+                      />
+                      <text
+                        fontFamily="Muli, Verdana"
+                        x="50%"
+                        y="50%"
+                        textAnchor="middle"
+                        fill="white"
+                        strokeWidth="1px"
+                        fontSize="1.5em"
+                        dy=".35em"
+                      >
+                        {char}
+                      </text>
+                    </g>
+                  </svg>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     );

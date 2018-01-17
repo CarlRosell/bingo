@@ -1,13 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import Bingo from './Bingo';
-import createRange from './createRange';
-
-const NUMBERS = createRange(0, 20);
-
-const CHARS = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ'].map(
-  a => `${a}${a.toLowerCase()}`
-);
+import './App.css';
 
 class App extends React.Component {
   constructor(props) {
@@ -16,16 +10,9 @@ class App extends React.Component {
   }
 
   render() {
-    const { numeric } = this.state;
     return (
       <div>
-        <Bingo chars={numeric ? NUMBERS : CHARS} isNumeric={numeric} />
-        <button
-          style={{ position: 'absolute', top: '400px' }}
-          onClick={() => this.setState(state => ({ numeric: !state.numeric }))}
-        >
-          Använd {numeric ? 'bokstäver' : 'siffror'}
-        </button>
+        <Bingo />
       </div>
     );
   }
