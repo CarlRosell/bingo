@@ -3,7 +3,12 @@ import shuffleArray from './shuffleArray';
 import createRange from './createRange';
 import './Bingo.css';
 
-const LINE_HEIGHT = 32;
+const BALL_SIZE = {
+  ACTIVE: 200,
+  DEFAULT: 30
+};
+
+const LINE_HEIGHT = BALL_SIZE.DEFAULT + 2;
 const ITEM_PER_ROW = 10;
 
 const CHARS = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ'].map(
@@ -76,9 +81,6 @@ export default class Bingo extends React.Component {
     } = this.state;
     return (
       <div>
-        <button onClick={this.toggleIsNumeric}>
-          Använd {isNumeric ? 'bokstäver' : 'siffror'}
-        </button>
         <div>
           <button
             disabled={chars.length === usedChars.length}
@@ -101,7 +103,12 @@ export default class Bingo extends React.Component {
             </span>
           )}
 
-          <div style={{ position: 'relative' }}>
+          <div
+            style={{
+              position: 'relative',
+              height: ITEM_PER_ROW * LINE_HEIGHT + 20
+            }}
+          >
             {chars.map((char, index) => {
               const usedIndex = usedChars.indexOf(char);
               return (
@@ -114,13 +121,21 @@ export default class Bingo extends React.Component {
                   }
                   style={{
                     animationDelay: `${2 / chars.length * index}s`,
-                    width: currentChar === char ? '150px' : '30px',
+                    animationDirection: ['normal', 'reverse'][index % 2],
+                    width:
+                      currentChar === char
+                        ? `${BALL_SIZE.ACTIVE}px`
+                        : `${BALL_SIZE.DEFAULT}px`,
+                    marginLeft:
+                      currentChar === char
+                        ? `-${BALL_SIZE.ACTIVE / 2}px`
+                        : `-${BALL_SIZE.DEFAULT / 2}px`,
                     left:
                       usedIndex >= 0
-                        ? '90%'
+                        ? '95%'
                         : currentChar === char
-                          ? '40%'
-                          : `${(index * 4) % 10 + 5}%`,
+                          ? '50%'
+                          : `${(index * 3) % 10 + 10}%`,
                     transform: `translateX(-${
                       usedIndex >= 0
                         ? `${Math.floor(usedIndex / ITEM_PER_ROW) *
@@ -131,7 +146,7 @@ export default class Bingo extends React.Component {
                     top:
                       usedIndex >= 0
                         ? `${(usedIndex % ITEM_PER_ROW) * LINE_HEIGHT}px`
-                        : currentChar === char ? '50px' : `${LINE_HEIGHT * 3}px`
+                        : currentChar === char ? '50px' : `40%`
                   }}
                 >
                   <svg viewBox="0 0 50 50">
@@ -151,7 +166,7 @@ export default class Bingo extends React.Component {
                         textAnchor="middle"
                         fill="white"
                         strokeWidth="1px"
-                        fontSize="1.5em"
+                        fontSize="20px"
                         dy=".35em"
                       >
                         {char}
@@ -163,12 +178,10 @@ export default class Bingo extends React.Component {
             })}
           </div>
         </div>
-        <button
-          style={{ position: 'absolute', top: '400px' }}
-          onClick={this.reset}
-        >
-          Börja om
+        <button onClick={this.toggleIsNumeric}>
+          Använd {isNumeric ? 'bokstäver' : 'siffror'}
         </button>
+        <button onClick={this.reset}>Börja om</button>
       </div>
     );
   }

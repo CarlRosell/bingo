@@ -21,10 +21,10 @@ input {
 
 @keyframes example {
   from {
-    transform: rotate(0deg) translateX(40px);
+    transform: rotate(0deg) translateX(30px);
   }
   to {
-    transform: rotate(360deg) translateX(40px);
+    transform: rotate(360deg) translateX(30px);
   }
 }
 
