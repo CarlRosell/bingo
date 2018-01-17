@@ -48,9 +48,7 @@ export default class Bingo extends React.Component {
 
   updateFirstNumber = numberString => {
     const number = parseInt(numberString, 10);
-    this.setState(s =>
-      generateInitialState(number, s.lastNumber, s.isNumeric)
-    );
+    this.setState(s => generateInitialState(number, s.lastNumber, s.isNumeric));
   };
 
   updateLastNumber = numberString => {
@@ -64,7 +62,7 @@ export default class Bingo extends React.Component {
     this.setState(s =>
       generateInitialState(s.firstNumber, s.lastNumber, !s.isNumeric)
     );
-  }
+  };
 
   render() {
     const {
@@ -77,8 +75,9 @@ export default class Bingo extends React.Component {
     } = this.state;
     return (
       <div>
-        <button onClick={this.toggleIsNumeric}>Använd {isNumeric ? 'bokstäver' : 'siffror'}</button>
-        <button onClick={this.reset}>Börja om</button>
+        <button onClick={this.toggleIsNumeric}>
+          Använd {isNumeric ? 'bokstäver' : 'siffror'}
+        </button>
         <div>
           <button
             disabled={chars.length === usedChars.length}
@@ -118,7 +117,9 @@ export default class Bingo extends React.Component {
                     left:
                       usedIndex >= 0
                         ? '90%'
-                        : currentChar === char ? '40%' : '5%',
+                        : currentChar === char
+                          ? '40%'
+                          : `${(index * 4) % 10 + 5}%`,
                     top:
                       usedIndex >= 0
                         ? `${usedIndex * LINE_HEIGHT}px`
@@ -154,6 +155,12 @@ export default class Bingo extends React.Component {
             })}
           </div>
         </div>
+        <button
+          style={{ position: 'absolute', top: '350px' }}
+          onClick={this.reset}
+        >
+          Börja om
+        </button>
       </div>
     );
   }
