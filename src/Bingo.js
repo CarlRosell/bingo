@@ -3,7 +3,8 @@ import shuffleArray from './shuffleArray';
 import createRange from './createRange';
 import './Bingo.css';
 
-const LINE_HEIGHT = 30;
+const LINE_HEIGHT = 32;
+const ITEM_PER_ROW = 10;
 
 const CHARS = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ'].map(
   a => `${a}${a.toLowerCase()}`
@@ -120,9 +121,16 @@ export default class Bingo extends React.Component {
                         : currentChar === char
                           ? '40%'
                           : `${(index * 4) % 10 + 5}%`,
+                    transform: `translateX(-${
+                      usedIndex >= 0
+                        ? `${Math.floor(usedIndex / ITEM_PER_ROW) *
+                            LINE_HEIGHT}px`
+                        : '0px'
+                    })`,
+                    zIndex: currentChar === char ? 1 : 0,
                     top:
                       usedIndex >= 0
-                        ? `${usedIndex * LINE_HEIGHT}px`
+                        ? `${(usedIndex % ITEM_PER_ROW) * LINE_HEIGHT}px`
                         : currentChar === char ? '50px' : `${LINE_HEIGHT * 3}px`
                   }}
                 >
@@ -156,7 +164,7 @@ export default class Bingo extends React.Component {
           </div>
         </div>
         <button
-          style={{ position: 'absolute', top: '350px' }}
+          style={{ position: 'absolute', top: '400px' }}
           onClick={this.reset}
         >
           Börja om
