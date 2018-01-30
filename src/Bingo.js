@@ -53,12 +53,12 @@ export default class Bingo extends React.Component {
   };
 
   updateFirstNumber = numberString => {
-    const number = parseInt(numberString, 10);
+    const number = parseInt(numberString, 10) || 0;
     this.setState(s => generateInitialState(number, s.lastNumber, s.isNumeric));
   };
 
   updateLastNumber = numberString => {
-    const number = parseInt(numberString, 10);
+    const number = parseInt(numberString, 10) || 0;
     this.setState(s =>
       generateInitialState(s.firstNumber, number, s.isNumeric)
     );
@@ -93,7 +93,7 @@ export default class Bingo extends React.Component {
               <input
                 type="number"
                 onChange={e => this.updateFirstNumber(e.target.value)}
-                value={firstNumber}
+                value={`${firstNumber}`}
               />
               <input
                 type="number"
