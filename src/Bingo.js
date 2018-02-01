@@ -1,6 +1,6 @@
 import React from 'react';
 import shuffleArray from './shuffleArray';
-import createRange from './createRange';
+import { createAlphaRange, createNumberRange } from './createRange';
 import './Bingo.css';
 
 const BALL_SIZE = {
@@ -11,22 +11,6 @@ const BALL_SIZE = {
 const LINE_HEIGHT = BALL_SIZE.DEFAULT + 2;
 const ITEM_PER_ROW = 10;
 
-const CHARS = [...'abcdefghijklmnopqrstuvwxyzåäö'];
-
-const sortNumbers = (a, b) => a - b;
-
-const createAlphqRange = (firstLetter, lastLetter) => {
-  const [firstIndex, lastIndex] = [
-    CHARS.indexOf(firstLetter.toLowerCase()),
-    CHARS.indexOf(lastLetter.toLowerCase())
-  ].sort(sortNumbers);
-  let availableChars = CHARS;
-  if (firstIndex >= 0 && lastIndex >= 0) {
-    availableChars = CHARS.slice(firstIndex, lastIndex + 1);
-  }
-  return availableChars.map(a => `${a.toUpperCase()}${a}`);
-};
-
 const generateInitialState = ({
   firstNumber,
   lastNumber,
@@ -36,8 +20,8 @@ const generateInitialState = ({
 }) => {
   debugger;
   const chars = isNumeric
-    ? createRange(firstNumber, lastNumber)
-    : createAlphqRange(firstLetter, lastLetter);
+    ? createNumberRange(firstNumber, lastNumber)
+    : createAlphaRange(firstLetter, lastLetter);
   return {
     chars,
     shuffledChars: shuffleArray([...chars]),
