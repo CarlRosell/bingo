@@ -4,8 +4,7 @@
   "version": "0.0.64",
   "dependencies": {
     "react": "16.0.0",
-    "react-dom": "16.0.0",
-    "serve": "^6.4.8"
+    "react-dom": "16.0.0"
   },
   "devDependencies": {
     "react-scripts": "1.0.0"
