@@ -11,12 +11,33 @@ const BALL_SIZE = {
 const LINE_HEIGHT = BALL_SIZE.DEFAULT + 2;
 const ITEM_PER_ROW = 10;
 
-const CHARS = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ'].map(
-  a => `${a}${a.toLowerCase()}`
-);
+const CHARS = [...'abcdefghijklmnopqrstuvwxyzåäö'];
 
-const generateInitialState = (firstNumber, lastNumber, isNumeric) => {
-  const chars = isNumeric ? createRange(firstNumber, lastNumber) : CHARS;
+const sortNumbers = (a, b) => a - b;
+
+const createAlphqRange = (firstLetter, lastLetter) => {
+  const [firstIndex, lastIndex] = [
+    CHARS.indexOf(firstLetter.toLowerCase()),
+    CHARS.indexOf(lastLetter.toLowerCase())
+  ].sort(sortNumbers);
+  let availableChars = CHARS;
+  if (firstIndex >= 0 && lastIndex >= 0) {
+    availableChars = CHARS.slice(firstIndex, lastIndex + 1);
+  }
+  return availableChars.map(a => `${a.toUpperCase()}${a}`);
+};
+
+const generateInitialState = ({
+  firstNumber,
+  lastNumber,
+  isNumeric,
+  firstLetter,
+  lastLetter
+}) => {
+  debugger;
+  const chars = isNumeric
+    ? createRange(firstNumber, lastNumber)
+    : createAlphqRange(firstLetter, lastLetter);
   return {
     chars,
     shuffledChars: shuffleArray([...chars]),
@@ -24,6 +45,8 @@ const generateInitialState = (firstNumber, lastNumber, isNumeric) => {
     currentChar: null,
     firstNumber,
     lastNumber,
+    firstLetter,
+    lastLetter,
     isNumeric
   };
 };
@@ -31,7 +54,13 @@ const generateInitialState = (firstNumber, lastNumber, isNumeric) => {
 export default class Bingo extends React.Component {
   constructor(props) {
     super(props);
-    this.state = generateInitialState(0, 20, true);
+    this.state = generateInitialState({
+      firstNumber: 0,
+      lastNumber: 20,
+      isNumeric: true,
+      firstLetter: 'a',
+      lastLetter: 'ö'
+    });
   }
 
   pickLetter = () => {
@@ -47,27 +76,35 @@ export default class Bingo extends React.Component {
   };
 
   reset = () => {
-    this.setState(s =>
-      generateInitialState(s.firstNumber, s.lastNumber, s.isNumeric)
-    );
+    this.setState(s => generateInitialState({ ...s, usedChars: [] }));
   };
 
   updateFirstNumber = numberString => {
-    const number = parseInt(numberString, 10) || 0;
-    this.setState(s => generateInitialState(number, s.lastNumber, s.isNumeric));
+    const firstNumber = parseInt(numberString, 10) || 0;
+    this.setState(s => generateInitialState({ ...s, firstNumber }));
   };
 
   updateLastNumber = numberString => {
-    const number = parseInt(numberString, 10) || 0;
-    this.setState(s =>
-      generateInitialState(s.firstNumber, number, s.isNumeric)
-    );
+    const lastNumber = parseInt(numberString, 10) || 0;
+    this.setState(s => generateInitialState({ ...s, lastNumber }));
+  };
+
+  updateFirstLetter = string => {
+    const firstLetter =
+      string.length > 0 ? [...string][string.length - 1] : 'a';
+    this.setState(s => generateInitialState({ ...s, firstLetter }));
+  };
+
+  updateLastLetter = string => {
+    const lastLetter = string.length > 0 ? [...string][string.length - 1] : 'ö';
+    this.setState(s => generateInitialState({ ...s, lastLetter }));
   };
 
   toggleIsNumeric = () => {
-    this.setState(s =>
-      generateInitialState(s.firstNumber, s.lastNumber, !s.isNumeric)
-    );
+    this.setState(s => {
+      console.log(s);
+      return generateInitialState({ ...s, isNumeric: !s.isNumeric });
+    });
   };
 
   render() {
@@ -77,6 +114,8 @@ export default class Bingo extends React.Component {
       usedChars,
       firstNumber,
       lastNumber,
+      firstLetter,
+      lastLetter,
       isNumeric
     } = this.state;
     return (
@@ -88,7 +127,7 @@ export default class Bingo extends React.Component {
           >
             Dra en {isNumeric ? 'siffra' : 'bokstav'}
           </button>
-          {isNumeric && (
+          {isNumeric === true ? (
             <span>
               <input
                 type="number"
@@ -99,6 +138,19 @@ export default class Bingo extends React.Component {
                 type="number"
                 onChange={e => this.updateLastNumber(e.target.value)}
                 value={`${lastNumber}`}
+              />
+            </span>
+          ) : (
+            <span>
+              <input
+                type="text"
+                onChange={e => this.updateFirstLetter(e.target.value)}
+                value={`${firstLetter}`}
+              />
+              <input
+                type="text"
+                onChange={e => this.updateLastLetter(e.target.value)}
+                value={`${lastLetter}`}
               />
             </span>
           )}
