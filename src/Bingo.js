@@ -9,7 +9,7 @@ const BALL_SIZE = {
 };
 
 const LINE_HEIGHT = BALL_SIZE.DEFAULT + 2;
-const ITEM_PER_ROW = 11;
+const ITEM_PER_ROW = 10;
 
 const generateInitialState = ({
   firstNumber,
